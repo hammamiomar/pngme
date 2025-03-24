@@ -11,7 +11,7 @@ pub struct Chunk{
     crc_chunk: [u8;4],
 }
 impl Chunk {
-    fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk{
+    pub fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk{
         let data_length = u32::to_be_bytes(data.len() as u32);
         let mut crc_bytes = chunk_type.bytes().to_vec();
         crc_bytes.extend_from_slice(&data);
@@ -31,7 +31,7 @@ impl Chunk {
     fn length(&self) -> u32{
         u32::from_be_bytes(self.data_length)
     }
-    fn chunk_type(&self) -> &ChunkType{
+    pub fn chunk_type(&self) -> &ChunkType{
         &self.chunk_type
     }
     fn data(&self) -> &[u8]{
@@ -40,13 +40,13 @@ impl Chunk {
     fn crc(&self) -> u32{
         u32::from_be_bytes(self.crc_chunk)
     }
-    fn data_as_string(&self) -> Result<String,Error>{
+    pub fn data_as_string(&self) -> Result<String,Error>{
         match str::from_utf8(&self.message_bytes[..]) {
             Ok(s) => Ok(s.to_string()),
             Err(_) => Err(fmt::Error),
         }
     }
-    fn as_bytes(&self) -> Vec<u8>{
+    pub fn as_bytes(&self) -> Vec<u8>{
         self.data_length
             .iter()
             .chain(self.chunk_type.bytes().iter())
